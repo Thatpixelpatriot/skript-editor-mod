@@ -1,4 +1,4 @@
-# Skript Editor - Fabric Mod for Minecraft 1.21.1
+# Skript Editor - Fabric Mod for Minecraft 1.21.11
 
 An in-game Skript script editor mod for Minecraft, built with Fabric. Provides a full-featured code editor GUI with syntax highlighting, file management, and server communication for editing `.sk` files on your server.
 
@@ -88,7 +88,7 @@ Run the Minecraft client with the mod loaded:
 
 ## Installation
 
-1. Install [Fabric Loader](https://fabricmc.net/use/) for Minecraft 1.21.1
+1. Install [Fabric Loader](https://fabricmc.net/use/) for Minecraft 1.21.11
 2. Install [Fabric API](https://modrinth.com/mod/fabric-api)
 3. Place the built `skript-editor-*.jar` in your `.minecraft/mods/` folder
 4. Launch Minecraft and press F10 to open the editor
@@ -159,28 +159,34 @@ messenger.registerIncomingPluginChannel(plugin, "skripteditor:file_list_req", (c
 ```
 src/main/java/com/skripteditor/
 ├── SkriptEditorClient.java          # Fabric client entrypoint
+├── config/
+│   └── EditorConfig.java            # Client-side configuration (.properties)
 ├── network/
 │   ├── SkriptPackets.java           # All packet type definitions + registration
-│   └── PacketHandler.java           # Client-side S2C response handlers
+│   ├── PacketHandler.java           # Client-side S2C response handlers
+│   └── ConnectionState.java         # Connection & handshake state tracking
 ├── editor/
 │   ├── EditorTab.java               # Per-tab state (content, cursor, undo)
+│   ├── DraftManager.java            # Auto-save draft recovery
 │   ├── SkriptSyntaxHighlighter.java # Skript syntax coloring engine
 │   └── UndoManager.java             # Undo/redo stack
 └── gui/
     ├── SkriptEditorScreen.java      # Main screen orchestrator
     ├── ConfirmDialog.java           # Modal yes/no dialog
+    ├── DependencyGraphScreen.java   # Script dependency graph view
     └── widget/
         ├── CodeEditorWidget.java    # Text editor widget
         ├── FileTreeWidget.java      # Sidebar file browser
         ├── TabBarWidget.java        # Tabbed file switcher
         ├── StatusBarWidget.java     # Bottom info bar
         ├── SearchBarWidget.java     # Find/search bar
-        └── ToastManager.java        # Notification toasts
+        ├── ToastManager.java        # Notification toasts
+        └── DependencyGraphWidget.java # Force-directed graph layout
 ```
 
 ## Version Note
 
-This mod targets Minecraft 1.21.1 with Fabric. If you're targeting a different version, update the version numbers in `gradle.properties`.
+This mod targets Minecraft 1.21.11 with Fabric. If you're targeting a different version, update the version numbers in `gradle.properties`.
 
 ## License
 
