@@ -1,0 +1,33 @@
+# Build outputs
+build/
+bin/
+out/
+
+# Gradle
+.gradle/
+
+# IDE
+.idea/
+.vscode/
+*.iml
+*.ipr
+*.iws
+.classpath
+.project
+.settings/
+
+# Minecraft run directory (generated when testing)
+run/
+
+# Stray compiled classes at project root
+/com/
+
+# Claude Code
+.claude/
+
+# OS files
+Thumbs.db
+.DS_Store
+
+# Fabric
+remappedSrc/

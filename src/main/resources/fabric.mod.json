@@ -1,0 +1,21 @@
+{
+    "schemaVersion": 1,
+    "id": "skripteditor",
+    "version": "${version}",
+    "name": "Skript Editor",
+    "description": "In-game Skript script editor with syntax highlighting, file management, and server communication.",
+    "authors": ["SkriptEditor"],
+    "contact": {},
+    "license": "MIT",
+    "icon": "assets/skripteditor/icon.png",
+    "environment": "client",
+    "entrypoints": {
+        "client": ["com.skripteditor.SkriptEditorClient"]
+    },
+    "depends": {
+        "fabricloader": ">=0.16.0",
+        "minecraft": "~1.21.11",
+        "java": ">=21",
+        "fabric-api": "*"
+    }
+}
