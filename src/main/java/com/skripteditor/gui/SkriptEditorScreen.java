@@ -50,11 +50,6 @@ public class SkriptEditorScreen extends Screen {
     private int activeTabIndex = -1;
     private int sidebarWidth = SIDEBAR_WIDTH;
 
-    // Reload console
-    private final List<String> reloadLogs = new ArrayList<>();
-    private boolean showReloadConsole = false;
-    private static final int CONSOLE_HEIGHT = 80;
-    private static final int MAX_RELOAD_LOGS = 200;
 
     public SkriptEditorScreen() {
         super(Text.translatable("skripteditor.title"));
@@ -96,7 +91,6 @@ public class SkriptEditorScreen extends Screen {
         // Code editor
         int editorY = tabBar.getHeight() + searchBar.getHeight();
         int editorHeight = height - editorY - statusBarHeight;
-        if (showReloadConsole) editorHeight -= CONSOLE_HEIGHT;
         codeEditor = new CodeEditorWidget(editorAreaX, editorY, editorAreaWidth, editorHeight);
         codeEditor.setOnContentChanged(this::onEditorContentChanged);
 
@@ -145,7 +139,6 @@ public class SkriptEditorScreen extends Screen {
 
         int editorY = tabBar.getHeight() + searchBar.getHeight();
         int editorHeight = height - editorY - statusBar.getHeight();
-        if (showReloadConsole) editorHeight -= CONSOLE_HEIGHT;
         codeEditor.setPosition(editorAreaX, editorY);
         codeEditor.setSize(editorAreaWidth, editorHeight);
 
@@ -175,10 +168,6 @@ public class SkriptEditorScreen extends Screen {
             renderWelcome(context, mouseX, mouseY);
         }
 
-        if (showReloadConsole) {
-            renderReloadConsole(context);
-        }
-
         EditorTab activeTab = activeTabIndex >= 0 ? openTabs.get(activeTabIndex) : null;
         statusBar.render(context, textRenderer, activeTab);
         toastManager.render(context, textRenderer, width, tabBar.getHeight() + 4);
@@ -199,54 +188,9 @@ public class SkriptEditorScreen extends Screen {
         int hintWidth = textRenderer.getWidth(hint);
         context.drawText(textRenderer, hint, cx - hintWidth / 2, cy, 0xFF6C7086, false);
 
-        String shortcutHint = "Ctrl+S Save | Ctrl+F Find | Ctrl+W Close Tab | F5 Reload";
+        String shortcutHint = "Ctrl+S Save | Ctrl+F Find | Ctrl+W Close Tab | F5 Reload | F7 Graph";
         int shWidth = textRenderer.getWidth(shortcutHint);
         context.drawText(textRenderer, shortcutHint, cx - shWidth / 2, cy + 16, 0xFF45475A, false);
-    }
-
-    private void renderReloadConsole(DrawContext context) {
-        int consoleX = sidebarWidth;
-        int consoleW = width - sidebarWidth;
-        int consoleY = height - statusBar.getHeight() - CONSOLE_HEIGHT;
-
-        // Background
-        context.fill(consoleX, consoleY, consoleX + consoleW, consoleY + CONSOLE_HEIGHT, 0xFF181825);
-        // Top border
-        context.fill(consoleX, consoleY, consoleX + consoleW, consoleY + 1, 0xFF313244);
-
-        // Title bar
-        context.drawText(textRenderer, "Reload Console", consoleX + 6, consoleY + 4, 0xFF89B4FA, false);
-
-        // Log lines
-        int lineY = consoleY + 16;
-        int maxLines = (CONSOLE_HEIGHT - 18) / 10;
-        int startIdx = Math.max(0, reloadLogs.size() - maxLines);
-        int maxTextWidth = consoleW - 12;
-        int ellipsisWidth = textRenderer.getWidth("...");
-        for (int i = startIdx; i < reloadLogs.size() && lineY < consoleY + CONSOLE_HEIGHT - 2; i++) {
-            String line = reloadLogs.get(i);
-            String lower = line.toLowerCase();
-            int color = 0xFFA6ADC8; // default
-            if (lower.contains("error")) color = 0xFFF38BA8;
-            else if (lower.contains("warn")) color = 0xFFFAB387;
-            else if (lower.contains("success") || lower.contains("loaded")) color = 0xFFA6E3A1;
-
-            // Truncate long lines using binary search instead of character-by-character loop
-            if (textRenderer.getWidth(line) > maxTextWidth) {
-                int lo = 1, hi = line.length();
-                while (lo < hi) {
-                    int mid = (lo + hi + 1) / 2;
-                    if (textRenderer.getWidth(line.substring(0, mid)) + ellipsisWidth <= maxTextWidth) {
-                        lo = mid;
-                    } else {
-                        hi = mid - 1;
-                    }
-                }
-                line = line.substring(0, lo) + "...";
-            }
-            context.drawText(textRenderer, line, consoleX + 6, lineY, color, false);
-            lineY += 10;
-        }
     }
 
     // =========================================================================
@@ -302,13 +246,6 @@ public class SkriptEditorScreen extends Screen {
         // F5 = reload current script, Shift+F5 = reload all
         if (keyCode == GLFW.GLFW_KEY_F5) {
             if (shift) reloadAllScripts(); else reloadCurrentScript();
-            return true;
-        }
-
-        // F6 = toggle reload console
-        if (keyCode == GLFW.GLFW_KEY_F6) {
-            showReloadConsole = !showReloadConsole;
-            updateLayout();
             return true;
         }
 
@@ -724,15 +661,6 @@ public class SkriptEditorScreen extends Screen {
         } else {
             toastManager.error(message.isEmpty() ? "Reload failed" : message);
             statusBar.setServerMessage("Reload FAILED", true);
-        }
-
-        // Store reload logs for the console (capped to prevent unbounded growth)
-        reloadLogs.clear();
-        if (!logs.isEmpty()) {
-            int start = Math.max(0, logs.size() - MAX_RELOAD_LOGS);
-            reloadLogs.addAll(logs.subList(start, logs.size()));
-            showReloadConsole = true;
-            updateLayout();
         }
     }
 

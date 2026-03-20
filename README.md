@@ -32,7 +32,6 @@ This mod is the **client-side** component of a two-part system:
 - **Unsaved Indicators** - Yellow dot on modified tabs, status bar warnings
 - **Keyboard Shortcuts** - Ctrl+S, Ctrl+F, Ctrl+W, Ctrl+Tab, F5, and more
 - **Toast Notifications** - Success/error messages for all operations
-- **Reload Console** - View Skript reload output (F6 to toggle)
 - **Dark Theme** - Catppuccin Mocha-inspired color scheme
 - **Status Bar** - File path, cursor position, save state, server messages
 
@@ -50,7 +49,7 @@ This mod is the **client-side** component of a two-part system:
 | Ctrl+N | Create new file |
 | F5 | Reload current script |
 | Shift+F5 | Reload all scripts |
-| F6 | Toggle reload console |
+| F7 | Open dependency graph |
 | Ctrl+Z | Undo |
 | Ctrl+Shift+Z | Redo |
 | Ctrl+D | Duplicate line |
